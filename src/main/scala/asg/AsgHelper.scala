@@ -1,8 +1,11 @@
+package asg
+
 import com.amazonaws.auth.DefaultAWSCredentialsProviderChain
 import com.amazonaws.services.autoscaling.AmazonAutoScalingAsyncClient
 import com.amazonaws.services.autoscaling.model.{AutoScalingGroup, DescribeAutoScalingGroupsRequest}
 
 import scala.collection.JavaConverters._
+import scala.collection.mutable
 
 object AsgHelper {
 
@@ -12,19 +15,19 @@ object AsgHelper {
 		filteredAsg.foreach(asg => println(asg.getAutoScalingGroupName))
 	}
 
-	class AsgFilter(autoScalingAsyncClient: AmazonAutoScalingAsyncClient) extends AsgFilterTrait {
+	implicit class AsgFilter(autoScalingAsyncClient: AmazonAutoScalingAsyncClient) extends AsgFilterTrait {
 		def this() {
 			this(new AmazonAutoScalingAsyncClient(new DefaultAWSCredentialsProviderChain))
 		}
 
-		private def getAutoScalingGroups(): collection.mutable.Buffer[AutoScalingGroup] = {
+		private def getAutoScalingGroups(): mutable.Buffer[AutoScalingGroup] = {
 			autoScalingAsyncClient.describeAutoScalingGroups(new DescribeAutoScalingGroupsRequest()).getAutoScalingGroups
 		}.asScala
 
-		override def asgByFilters(filters: Map[String, String]): collection.mutable.Buffer[AutoScalingGroup] = {
+		override def asgByFilters(filters: Map[String, String]): mutable.Buffer[AutoScalingGroup] = {
 			var asgs = getAutoScalingGroups()
-			filters.foreach(f = p => {
-				val filteredAsgList = new collection.mutable.ArrayBuffer[AutoScalingGroup]
+			filters.foreach(p => {
+				val filteredAsgList = new mutable.ArrayBuffer[AutoScalingGroup]
 
 				asgs.foreach(asg => {
 					val tags = asg.getTags.asScala
@@ -41,8 +44,9 @@ object AsgHelper {
 			asgs
 		}
 	}
+
 	trait AsgFilterTrait {
-		def asgByFilters(filters: Map[String, String]): collection.mutable.Buffer[AutoScalingGroup]
+		def asgByFilters(filters: Map[String, String]): mutable.Buffer[AutoScalingGroup]
 	}
 
 }
