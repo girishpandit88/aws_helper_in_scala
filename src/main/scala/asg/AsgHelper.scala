@@ -20,12 +20,19 @@ object AsgHelper {
 			this(new AmazonAutoScalingAsyncClient(new DefaultAWSCredentialsProviderChain))
 		}
 
-		private def getAutoScalingGroups(): mutable.Buffer[AutoScalingGroup] = {
-			autoScalingAsyncClient.describeAutoScalingGroups(new DescribeAutoScalingGroupsRequest()).getAutoScalingGroups
-		}.asScala
+		private def getAutoScalingGroups(nextToken: Option[String] = None): List[AutoScalingGroup] = {
+			val request = new DescribeAutoScalingGroupsRequest()
+			nextToken.foreach(request.setNextToken)
+			val result = autoScalingAsyncClient.describeAutoScalingGroups(request)
+			val autoScalingGroups = result.getAutoScalingGroups.asScala.toList
+			Option(result.getNextToken) match {
+				case None => autoScalingGroups
+				case token: Some[String] => autoScalingGroups ++ getAutoScalingGroups(token)
+			}
+		}
 
-		override def asgByFilters(filters: Map[String, String]): mutable.Buffer[AutoScalingGroup] = {
-			var asgs = getAutoScalingGroups()
+		override def asgByFilters(filters: Map[String, String]): List[AutoScalingGroup] = {
+			var asgs = getAutoScalingGroups(None)
 			filters.foreach(p => {
 				val filteredAsgList = new mutable.ArrayBuffer[AutoScalingGroup]
 
@@ -46,7 +53,7 @@ object AsgHelper {
 	}
 
 	trait AsgFilterTrait {
-		def asgByFilters(filters: Map[String, String]): mutable.Buffer[AutoScalingGroup]
+		def asgByFilters(filters: Map[String, String]): List[AutoScalingGroup]
 	}
 
 }

@@ -25,23 +25,20 @@ object EC2Helper {
 			var instances = new mutable.MutableList[Instance]
 			val filteredAsgs = new AsgFilter().asgByFilters(filters)
 			filteredAsgs.foreach(asg => {
-				asg.getInstances.asScala.foreach(i => instances += i)
+				asg.getInstances.asScala.foreach(instances+=_)
 			})
 			instances
 		}
 
-		private def describeEc2InstanceReservation(instance: Instance): mutable.Buffer[Reservation] = {
+		private def describeEc2InstanceReservations(instance: Instance): mutable.Buffer[Reservation] = {
 			amazonEC2Client.describeInstances(new DescribeInstancesRequest().withInstanceIds(instance.getInstanceId)).getReservations
 		}.asScala
 
 		override def ec2Filter(filters: Map[String, String]): mutable.MutableList[model.Instance] = {
 			val filteredInstances = getAsgInstances(filters)
 			var ec2Instances = new mutable.MutableList[com.amazonaws.services.ec2.model.Instance]
-			filteredInstances.foreach(instance => {
-				describeEc2InstanceReservation(instance).foreach(
-					reservation => reservation.getInstances.asScala.foreach(
-						ec2instance => ec2Instances += ec2instance))
-			})
+			filteredInstances.foreach(describeEc2InstanceReservations(_)
+				.foreach(_.getInstances.asScala.foreach(ec2Instances += _)))
 			ec2Instances
 		}
 	}
