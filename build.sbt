@@ -4,5 +4,8 @@ version := "1.0"
 
 scalaVersion := "2.11.7"
 
-libraryDependencies += "com.amazonaws" % "aws-java-sdk" % "1.10.43"
-    
+libraryDependencies ++= Seq(
+  "org.scalatest" %% "scalatest" % "2.2.5" % "test",
+  "com.amazonaws" % "aws-java-sdk" % "1.10.43",
+  "org.scalamock" %% "scalamock-scalatest-support" % "3.2" % "test"
+)

@@ -1,0 +1,14 @@
+import asg.AsgByTagFilters
+import ec2.EC2Helper
+
+object Main {
+	def main(args: Array[String]) {
+		val filteredAsg = new AsgByTagFilters().asgByFilters(Map("Name" -> "sample-app", "environment" -> "dev"))
+		filteredAsg.foreach(asg => println(asg.getAutoScalingGroupName))
+		val ec2Helper = new EC2Helper()
+		val ec2InstancesByFilters = ec2Helper.ec2InstancesByFilter(Map("Name" -> "sample-app", "environment" -> "dev"))
+		ec2InstancesByFilters.foreach(instance => println(instance.getPublicIpAddress + " " + instance.getKeyName))
+		val ec2InstanceIpsByFilters = ec2Helper.ec2InstanceIPsByFilter(Map("Name" -> "sample-app", "environment" -> "dev"))
+		ec2InstanceIpsByFilters.foreach(println(_))
+	}
+}
