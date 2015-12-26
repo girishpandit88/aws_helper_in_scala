@@ -4,7 +4,6 @@ import asg.AutoScalingGroups
 import com.amazonaws.services.ec2.model
 
 import scala.collection.JavaConverters._
-import scala.collection.mutable
 import scala.collection.mutable.HashSet
 
 class EC2InstancesByFilter(ec2Instances:EC2InstanceReservations,autoScalingGroups: AutoScalingGroups) extends EC2InstancesByFilterTrait {
@@ -24,7 +23,7 @@ class EC2InstancesByFilter(ec2Instances:EC2InstanceReservations,autoScalingGroup
 
 	override def ec2InstanceIPsByFilter(filters: Map[String, String]): Set[(String, String, String)] = {
 		val ec2InstancesByFilters = ec2InstancesByFilter(filters)
-		val ec2InstanceMetadata = new mutable.HashSet[(String,String,String)]
+		val ec2InstanceMetadata = new HashSet[(String,String,String)]
 		ec2InstancesByFilters.foreach(instance=>ec2InstanceMetadata.add(instance.getInstanceId,instance.getPublicIpAddress,instance.getPrivateIpAddress))
 		ec2InstanceMetadata.toSet
 	}
