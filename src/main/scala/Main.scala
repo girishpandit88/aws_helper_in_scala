@@ -8,7 +8,7 @@ object Main {
 		val ec2Helper = new EC2InstancesByFilter()
 //		val ec2InstancesByFilters = ec2Helper.ec2InstancesByFilter(Map("Name" -> "sample-app", "environment" -> "dev"))
 //		ec2InstancesByFilters.foreach(instance => println(instance.getPublicIpAddress + " " + instance.getKeyName))
-		val ec2InstanceIpsByFilters = ec2Helper.ec2InstanceIPsByFilter(Map("service-name" -> "optel", "service-environment" -> "optel-load"))
+		val ec2InstanceIpsByFilters = ec2Helper.ec2InstanceIPsByFilter(Map("Name" -> "sample-app", "environment" -> "dev"))
 		ec2InstanceIpsByFilters.foreach(println(_))
 	}
 }
