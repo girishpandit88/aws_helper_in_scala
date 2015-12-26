@@ -7,8 +7,7 @@ This project is designed to teach myself scala. At the same time I'll be adding 
 Usage of AsgHelper
 
 ```scala
-val asgFilter = new AsgFilter()
-val filteredAsg = asgFilter.asgByFilters(Map("TagKey1" -> "TagValue1", "TagKey2" -> "TagValue1"))
+val filteredAsg = new AsgByTagFilters().asgByFilters(Map("Name" -> "sample-app", "environment" -> "dev"))
 filteredAsg.foreach(asg => println(asg.getAutoScalingGroupName))
 ```
 
@@ -16,7 +15,7 @@ filteredAsg.foreach(asg => println(asg.getAutoScalingGroupName))
 Usage of EC2Helper
 
 ```scala
-val ec2Helper = new EC2Helper()
+val ec2Helper = new EC2InstancesByFilter()
 ec2Helper.ec2Filter(Map("Name" -> "sample-app", "environment" -> "dev"))
     .foreach(instance => println(instance.getPublicIpAddress + " " + instance.getKeyName))
 ```
