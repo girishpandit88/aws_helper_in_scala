@@ -1,4 +1,4 @@
-AWS Helper utilites in Scala
+AWS Helper utilities in Scala
 =========================================
 
 This project is designed to teach myself scala. At the same time I'll be adding aws helper functions which I can use in my daily code
